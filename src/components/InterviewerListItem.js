@@ -3,28 +3,20 @@ import "components/InterviewerListItem.scss";
 import classNames from "classnames";
 
 export default function InterviewerListItem({ id, name, avatar, selected, setInterviewer}) {
-  const interviewerClass = classNames("interviewers__item-image", {
+  const interviewerClass = classNames("interviewers__item", {
     "interviewers__item--selected": selected
   });
 
-  const formatSpots = (spots) => {
-    if(!spots) {
-      return "no spots remaining"
-    } else if(spots === 1) {
-      return "1 spot remaining"
-    } else return `${spots} spots remaining`
-  }
-
   return (
     <li 
-      className="interviewers__item"
+      className={interviewerClass}
       onClick={() => setInterviewer(id)}>
       <img
-        className={interviewerClass}
+        className="interviewers__item-image"
         src={avatar}
         alt={name}
       />
-      {name}
+      {selected && name}
     </li>
   );
 }
