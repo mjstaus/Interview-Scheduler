@@ -9,11 +9,9 @@ export default function DayList({ days, day, setDay }) {
       name={name}
       spots={spots} 
       selected={name === day}
-      setDay={setDay}
+      setDay={() => setDay(id)}
       />
   ))
-
-  console.log(dayList)
 
   return (
     <ul>
