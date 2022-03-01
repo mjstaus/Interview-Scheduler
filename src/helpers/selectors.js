@@ -1,5 +1,12 @@
 export function getAppointmentsForDay(state, day) {
-  const apptsFromDay = state.days.filter(d => d.name === day)[0].appointments;
+  if(!state.days){
+    return [];
+  }
+  const filteredDay = state.days.filter(d => d.name === day)[0];
+  if(!filteredDay){
+    return [];
+  }
+  const apptsFromDay = filteredDay.appointments;
   
   if(!apptsFromDay){
     return [];
