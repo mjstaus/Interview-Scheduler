@@ -3,6 +3,7 @@ import axios from "axios";
 import "components/Application.scss";
 import DayList from "components/DayList";
 import Appointment from "components/Appointment";
+import { getAppointmentsForDay } from "helpers/selectors";
 
 export default function Application(props) {
   const [state, setState] = useState({
@@ -10,18 +11,18 @@ export default function Application(props) {
     days: [],
     appointments: {},
   });
-  const dailyAppointments = [];
+
   
   const setDay = (day) => setState({ ...state, day });
-
+  
   useEffect(() => {
     Promise.all([
       axios.get("/api/days", {
-          proxy: {
-            host: "localhost",
-            port: 8001,
-          },
-        }),
+        proxy: {
+          host: "localhost",
+          port: 8001,
+        },
+      }),
       axios.get("/api/appointments", {
         proxy: {
           host: "localhost",
@@ -36,8 +37,11 @@ export default function Application(props) {
         console.log(error.header);
         console.log(error.data);
       });
-  }, []);
-
+    }, []);
+  
+  const dailyAppointments = getAppointmentsForDay(state, state.day);
+  console.log(dailyAppointments);
+    
   return (
     <main className="layout">
       <section className="sidebar">
@@ -58,7 +62,7 @@ export default function Application(props) {
       </section>
       <section className="schedule">
         {dailyAppointments.map((appointment) => (
-          <Appointment key={appointment[1].id} {...appointment[1]} />
+          <Appointment key={appointment.id} {...appointment} />
         ))}
         <Appointment key="last" time="5pm" />
       </section>
