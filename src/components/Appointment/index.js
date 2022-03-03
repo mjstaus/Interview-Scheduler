@@ -17,7 +17,7 @@ const SAVING = "SAVING";
 const DELETING = "DELETING";
 const CONFIRM = "CONFIRM";
 
-export default function Appointment({ interview, time }) {
+export default function Appointment({ interview, time, interviewers }) {
   
   const { mode, transition, back } = useVisualMode(
     interview ? SHOW : EMPTY
@@ -34,7 +34,7 @@ export default function Appointment({ interview, time }) {
       )}
       {mode === CREATE && (
         <Form 
-          interviewers={[]}
+          interviewers={interviewers}
           onSave={() => transition(SAVING)}
           onCancel={() => back()}
           />)}
