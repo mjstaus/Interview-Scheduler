@@ -16,6 +16,8 @@ const EDIT = "EDIT";
 const SAVING = "SAVING";
 const DELETING = "DELETING";
 const CONFIRM = "CONFIRM";
+const ERROR_SAVE= "ERROR_SAVE";
+const ERROR_DELETE= "ERROR_DELETE";
 
 export default function Appointment({
   id,
@@ -33,12 +35,16 @@ export default function Appointment({
       interviewer,
     };
     transition(SAVING);
-    bookInterview(id, interview).then(() => transition(SHOW));
+    bookInterview(id, interview)
+      .then(() => transition(SHOW))
+      .catch(() => transition(ERROR_SAVE, true));
   }
 
-  function cancel() {
+  function destroy() {
     transition(DELETING);
-    cancelInterview(id).then(() => transition(EMPTY))
+    cancelInterview(id)
+      .then(() => transition(EMPTY, true))
+      .catch(() => transition(ERROR_DELETE, true))
   }
 
   return (
@@ -62,7 +68,7 @@ export default function Appointment({
       {(mode === EDIT) && (
         <Form
           student={interview.student}
-          interviewer={interview.interviewer}
+          interviewer={interview.interviewer.id}
           interviewers={interviewers}
           onSave={(name, interviewer) => save(name, interviewer)}
           onCancel={() => back()}
@@ -70,13 +76,17 @@ export default function Appointment({
       )}
       {mode === CONFIRM && (
         <Confirm
-          onConfirm={() => cancel(id)}
+          onConfirm={() => destroy(id)}
           onCancel={() => back()}
           message={"Are you sure you would like to delete?"}
         />
       )}
       {mode === SAVING && <Status message="Saving" />}
       {mode === DELETING && <Status message="Deleting"/>}
+      {mode === ERROR_DELETE && <Error 
+        message="Uh oh! Something went wrong!"
+        onClose={() => back()}/>}
+      {mode === ERROR_SAVE && <Error message="Uh oh! Something went wrong!"/>}
     </article>
   );
 }
