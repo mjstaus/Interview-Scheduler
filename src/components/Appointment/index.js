@@ -49,10 +49,20 @@ export default function Appointment({
         <Show 
           student={interview.student} 
           interviewer={interview.interviewer}
-          onDelete={() => transition(CONFIRM)} />
+          onDelete={() => transition(CONFIRM)}
+          onEdit={() => transition(EDIT)} />
       )}
-      {mode === CREATE && (
+      {(mode === CREATE) && (
         <Form
+          interviewers={interviewers}
+          onSave={(name, interviewer) => save(name, interviewer)}
+          onCancel={() => back()}
+        />
+      )}
+      {(mode === EDIT) && (
+        <Form
+          student={interview.student}
+          interviewer={interview.interviewer}
           interviewers={interviewers}
           onSave={(name, interviewer) => save(name, interviewer)}
           onCancel={() => back()}
