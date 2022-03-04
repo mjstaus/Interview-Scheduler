@@ -17,30 +17,39 @@ const SAVING = "SAVING";
 const DELETING = "DELETING";
 const CONFIRM = "CONFIRM";
 
-export default function Appointment({ interview, time, interviewers }) {
-  
-  const { mode, transition, back } = useVisualMode(
-    interview ? SHOW : EMPTY
-  );
+export default function Appointment({
+  id,
+  interview,
+  time,
+  interviewers,
+  bookInterview,
+}) {
+  const { mode, transition, back } = useVisualMode(interview ? SHOW : EMPTY);
+
+  function save(name, interviewer) {
+    const interview = {
+      student: name,
+      interviewer,
+    };
+    transition(SAVING);
+    bookInterview(id, interview).then(() => transition(SHOW));
+  }
 
   return (
     <article className="appointment">
-      <Header time={time}/>
+      <Header time={time} />
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
       {mode === SHOW && (
-        <Show
-          student={interview.student}
-          interviewer={interview.interviewer} />
+        <Show student={interview.student} interviewer={interview.interviewer} />
       )}
       {mode === CREATE && (
-        <Form 
+        <Form
           interviewers={interviewers}
-          onSave={() => transition(SAVING)}
+          onSave={(name, interviewer) => save(name, interviewer)}
           onCancel={() => back()}
-          />)}
-      {mode === SAVING && (
-        <Status message="Saving"/>
+        />
       )}
+      {mode === SAVING && <Status message="Saving" />}
     </article>
-  )
+  );
 }
