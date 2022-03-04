@@ -23,6 +23,7 @@ export default function Appointment({
   time,
   interviewers,
   bookInterview,
+  cancelInterview,
 }) {
   const { mode, transition, back } = useVisualMode(interview ? SHOW : EMPTY);
 
@@ -35,12 +36,20 @@ export default function Appointment({
     bookInterview(id, interview).then(() => transition(SHOW));
   }
 
+  function cancel() {
+    transition(DELETING);
+    cancelInterview(id).then(() => transition(EMPTY))
+  }
+
   return (
     <article className="appointment">
       <Header time={time} />
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
       {mode === SHOW && (
-        <Show student={interview.student} interviewer={interview.interviewer} />
+        <Show 
+          student={interview.student} 
+          interviewer={interview.interviewer}
+          onDelete={() => cancel(id)} />
       )}
       {mode === CREATE && (
         <Form
@@ -50,6 +59,7 @@ export default function Appointment({
         />
       )}
       {mode === SAVING && <Status message="Saving" />}
+      {mode === DELETING && <Status message="Deleting"/>}
     </article>
   );
 }
