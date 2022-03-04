@@ -41,9 +41,9 @@ export default function Appointment({
   }
 
   function destroy() {
-    transition(DELETING);
+    transition(DELETING, true);
     cancelInterview(id)
-      .then(() => transition(EMPTY, true))
+      .then(() => transition(EMPTY))
       .catch(() => transition(ERROR_DELETE, true))
   }
 
@@ -86,7 +86,7 @@ export default function Appointment({
       {mode === ERROR_DELETE && <Error 
         message="Uh oh! Something went wrong!"
         onClose={() => back()}/>}
-      {mode === ERROR_SAVE && <Error message="Uh oh! Something went wrong!"/>}
+      {mode === ERROR_SAVE && <Error message="Uh oh! Something went wrong!" onClose={() => back()}/>}
     </article>
   );
 }
