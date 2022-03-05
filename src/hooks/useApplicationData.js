@@ -13,24 +13,19 @@ export function useApplicationData() {
   const setDay = (day) => setState({ ...state, day });
 
   useEffect(() => {
+    const proxy = {
+      host: "localhost",
+      port: 8001,
+    }
     Promise.all([
       axios.get("/api/days", {
-        proxy: {
-          host: "localhost",
-          port: 8001,
-        },
+        proxy: proxy
       }),
       axios.get("/api/appointments", {
-        proxy: {
-          host: "localhost",
-          port: 8001,
-        },
+        proxy: proxy
       }),
       axios.get("/api/interviewers", {
-        proxy: {
-          host: "localhost",
-          port: 8001,
-        },
+        proxy: proxy
       }),
     ])
       .then((all) => {
