@@ -18,6 +18,11 @@ export default function Form(props) {
 
   const onHandleSubmit = (event) => {
     event.preventDefault();
+
+    if(!interviewer) {
+      alert('Please select an interviewer')
+      return
+    }
     props.onSave(student, interviewer);
   };
 
@@ -32,6 +37,7 @@ export default function Form(props) {
             value={student}
             placeholder="Student Name"
             onChange={(event) => setStudent(event.target.value)}
+            required
           />
           <InterviewerList
             interviewers={props.interviewers}
