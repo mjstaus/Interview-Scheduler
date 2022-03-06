@@ -43,21 +43,6 @@ export function useApplicationData() {
       });
   }, []);
 
-  function bookInterview(id, interview) {
-    const appointment = {
-      ...state.appointments[id],
-      interview: { ...interview },
-    };
-    
-    const updateAppts = axios.put(`/api/appointments/${id}`, appointment);
-    updateAppts
-      .then(() => updateSpots(appointment))
-      .catch((error) => {
-        console.log(error);
-      });
-    return updateAppts;
-  }
-
   function updateAppointmentsAndSpots(appointment) {
     const { day, days, appointments } = state;
 
@@ -85,6 +70,21 @@ export function useApplicationData() {
       days: updatedDays,
     })
   }
+
+  function bookInterview(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview },
+    };
+    
+    const updateAppts = axios.put(`/api/appointments/${id}`, appointment);
+    updateAppts
+      .then(() => updateAppointmentsAndSpots(appointment))
+      .catch((error) => {
+        console.log(error);
+      });
+    return updateAppts;
+  }
   
 
   function cancelInterview(id) {
@@ -95,7 +95,7 @@ export function useApplicationData() {
 
     const deleteInterview = axios.delete(`/api/appointments/${id}`, appointment);
     deleteInterview
-      .then(() => updateSpots(appointment))
+      .then(() => updateAppointmentsAndSpots(appointment))
       .catch((error) => {
         console.log(error);
       });
