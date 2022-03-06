@@ -48,35 +48,58 @@ export function useApplicationData() {
       ...state.appointments[id],
       interview: { ...interview },
     };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment,
-    };
+    
     const updateAppts = axios.put(`/api/appointments/${id}`, appointment);
     updateAppts
-      .then(() => setState({ ...state, appointments: { ...appointments } }))
+      .then(() => updateSpots(appointment))
       .catch((error) => {
         console.log(error);
       });
     return updateAppts;
   }
 
+  function updateAppointmentsAndSpots(appointment) {
+    const { day, days, appointments } = state;
+
+    const updatedAppointments = {
+      ...appointments,
+      [appointment.id]: appointment,
+    };
+    
+    const updatedDays = days.map((d) => {
+      if(d.name === day){
+        const availableSpotsForDay = d.appointments.filter((id) => !updatedAppointments[id].interview).length;
+
+        return {
+          ...d,
+          spots: availableSpotsForDay
+        }
+      }
+
+      return d
+    })
+
+    setState({
+      ...state,
+      appointments: updatedAppointments,
+      days: updatedDays,
+    })
+  }
+  
+
   function cancelInterview(id) {
     const appointment = {
       ...state.appointments[id],
       interview: null,
     };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment,
-    };
-    const deleteAppt = axios.delete(`/api/appointments/${id}`, appointment);
-    deleteAppt
-      .then(() => setState({ ...state, appointments: { ...appointments } }))
+
+    const deleteInterview = axios.delete(`/api/appointments/${id}`, appointment);
+    deleteInterview
+      .then(() => updateSpots(appointment))
       .catch((error) => {
         console.log(error);
       });
-    return deleteAppt;
+    return deleteInterview;
   }
 
   return {
