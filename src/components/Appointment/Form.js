@@ -17,14 +17,14 @@ export default function Form(props) {
   };
 
   const onHandleSubmit = (event) => {
-    event.preventDefault()
-    props.onSave(student, interviewer)
-  }
+    event.preventDefault();
+    props.onSave(student, interviewer);
+  };
 
   return (
-    <main className="appointment__card appointment__card--create">
-      <section className="appointment__card-left">
-        <form autoComplete="off" onSubmit={onHandleSubmit}>
+    <form autoComplete="off" onSubmit={onHandleSubmit}>
+      <main className="appointment__card appointment__card--create">
+        <section className="appointment__card-left">
           <input
             className="appointment__create-input text--semi-bold"
             name="name"
@@ -33,23 +33,23 @@ export default function Form(props) {
             placeholder="Student Name"
             onChange={(event) => setStudent(event.target.value)}
           />
-        </form>
-        <InterviewerList
-          interviewers={props.interviewers}
-          onChange={setInterviewer}
-          value={interviewer}
-        />
-      </section>
-      <section className="appointment__card-right">
-        <section className="appointment__actions">
-          <Button danger onClick={cancel}>
-            Cancel
-          </Button>
-          <Button type="submit" confirm >
-            Save
-          </Button>
+          <InterviewerList
+            interviewers={props.interviewers}
+            onChange={setInterviewer}
+            value={interviewer}
+          />
         </section>
-      </section>
-    </main>
+        <section className="appointment__card-right">
+          <section className="appointment__actions">
+            <Button danger onClick={cancel}>
+              Cancel
+            </Button>
+            <Button type="submit" confirm>
+              Save
+            </Button>
+          </section>
+        </section>
+      </main>
+    </form>
   );
 }
