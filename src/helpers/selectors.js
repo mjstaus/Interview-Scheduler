@@ -52,6 +52,6 @@ export function getInterview(state, interview) {
   const interviewersArray = Object.entries(state.interviewers);
   const filteredInterviewer = interviewersArray.filter(i => i[1].id === interview.interviewer);
   const interviewer = filteredInterviewer[0][1];
-  const result = {...interview, interviewer: interviewer}
+  const result = {...interview, interviewer}
   return result
 }
