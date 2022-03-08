@@ -1,40 +1,80 @@
-import { useState, useEffect } from "react";
+import { useEffect, useReducer } from "react";
 import axios from "axios";
+import { action } from "@storybook/addon-actions";
 
 export function useApplicationData() {
-  
-  const [state, setState] = useState({
+  const SET_DAY = "SET_DAY";
+  const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
+  const SET_INTERVIEW = "SET_INTERVIEW";
+
+  const initialState = {
     day: "Monday",
     days: [],
     appointments: {},
     interviewers: {},
-  });
+  };
 
-  const setDay = (day) => setState({ ...state, day });
+  function reducer(state, action) {
+    switch (action.type) {
+      case SET_DAY:
+        return { ...state, day: action.value };
+      case SET_APPLICATION_DATA:
+        return {
+          ...state,
+          days: action.value[0].data,
+          appointments: action.value[1].data,
+          interviewers: action.value[2].data,
+        };
+
+      case SET_INTERVIEW: {
+        return {
+          ...state,
+          appointments: action.value[0],
+          days: action.value[1],
+        };
+      }
+      default:
+        throw new Error(
+          `Tried to reduce with unsupported action type: ${action.type}`
+        );
+    }
+  }
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  function setDay(day) {
+    dispatch({type: SET_DAY, value: day})
+  }
 
   useEffect(() => {
     const proxy = {
       host: "localhost",
       port: 8001,
-    }
+    };
+
+    // const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    // ws.onopen = (event) => {
+    //   ws.send("ping");
+    // };
+    // ws.onerror = (error) => {
+    //   console.log(`WebSocket error: ${error}`)
+    // }
+    // ws.onmessage = (event) => {
+    //   console.log("Message received:", event.data)
+    // }
+
     Promise.all([
       axios.get("/api/days", {
-        proxy: proxy
+        proxy: proxy,
       }),
       axios.get("/api/appointments", {
-        proxy: proxy
+        proxy: proxy,
       }),
       axios.get("/api/interviewers", {
-        proxy: proxy
+        proxy: proxy,
       }),
     ])
       .then((all) => {
-        setState((prev) => ({
-          ...prev,
-          days: all[0].data,
-          appointments: all[1].data,
-          interviewers: all[2].data,
-        }));
+        dispatch({ type: SET_APPLICATION_DATA, value: all });
       })
       .catch((error) => {
         console.log(error.status);
@@ -50,25 +90,26 @@ export function useApplicationData() {
       ...appointments,
       [appointment.id]: appointment,
     };
-    
+
     const updatedDays = days.map((d) => {
-      if(d.name === day){
-        const availableSpotsForDay = d.appointments.filter((id) => !updatedAppointments[id].interview).length;
+      if (d.name === day) {
+        const availableSpotsForDay = d.appointments.filter(
+          (id) => !updatedAppointments[id].interview
+        ).length;
 
         return {
           ...d,
-          spots: availableSpotsForDay
-        }
+          spots: availableSpotsForDay,
+        };
       }
 
-      return d
-    })
+      return d;
+    });
 
-    setState({
-      ...state,
-      appointments: updatedAppointments,
-      days: updatedDays,
-    })
+    dispatch({
+      type: SET_INTERVIEW,
+      value: [updatedAppointments, updatedDays],
+    });
   }
 
   function bookInterview(id, interview) {
@@ -76,7 +117,7 @@ export function useApplicationData() {
       ...state.appointments[id],
       interview: { ...interview },
     };
-    
+
     const updateAppts = axios.put(`/api/appointments/${id}`, appointment);
     updateAppts
       .then(() => updateAppointmentsAndSpots(appointment))
@@ -85,7 +126,6 @@ export function useApplicationData() {
       });
     return updateAppts;
   }
-  
 
   function cancelInterview(id) {
     const appointment = {
@@ -93,7 +133,10 @@ export function useApplicationData() {
       interview: null,
     };
 
-    const deleteInterview = axios.delete(`/api/appointments/${id}`, appointment);
+    const deleteInterview = axios.delete(
+      `/api/appointments/${id}`,
+      appointment
+    );
     deleteInterview
       .then(() => updateAppointmentsAndSpots(appointment))
       .catch((error) => {
@@ -106,6 +149,6 @@ export function useApplicationData() {
     state,
     setDay,
     bookInterview,
-    cancelInterview
-  }
+    cancelInterview,
+  };
 }
