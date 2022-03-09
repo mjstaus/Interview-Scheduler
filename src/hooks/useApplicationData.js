@@ -50,17 +50,6 @@ export function useApplicationData() {
       port: 8001,
     };
 
-    // const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-    // ws.onopen = (event) => {
-    //   ws.send("ping");
-    // };
-    // ws.onerror = (error) => {
-    //   console.log(`WebSocket error: ${error}`)
-    // }
-    // ws.onmessage = (event) => {
-    //   console.log("Message received:", event.data)
-    // }
-
     Promise.all([
       axios.get("/api/days", {
         proxy: proxy,
