@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "components/Appointment/styles.scss";
 import Header from "components/Appointment/Header.js";
 import Show from "components/Appointment/Show.js";
@@ -29,6 +29,10 @@ export default function Appointment({
 }) {
   const { mode, transition, back } = useVisualMode(interview ? SHOW : EMPTY);
 
+  useEffect(() => {
+    transition(interview ? SHOW : EMPTY)
+  }, [interview]);
+
   function save(name, interviewer) {
     const interview = {
       student: name,
@@ -51,10 +55,10 @@ export default function Appointment({
     <article className="appointment">
       <Header time={time} />
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-      {mode === SHOW && (
+      {mode === SHOW && interview && (
         <Show 
           student={interview.student} 
-          interviewer={interview.interviewer}
+          interviewer={interview.interviewer} 
           onDelete={() => transition(CONFIRM)}
           onEdit={() => transition(EDIT)} />
       )}
