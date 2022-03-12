@@ -10,16 +10,36 @@ Interview Scheduler is
 ### View Appointments by Day
 
 
+https://user-images.githubusercontent.com/84533333/158037674-73412099-1c23-4c17-af6f-32427784f046.mov
+
+
+
 ### Add a New Appointment to an Available Appointment Slot
+
+
+https://user-images.githubusercontent.com/84533333/158037672-8a392a5b-9e17-4b91-bf81-fbd6cabdea33.mov
+
 
 
 ### Edit an Existing Appointment
 
 
+https://user-images.githubusercontent.com/84533333/158037663-c133043f-e366-42a2-a0d2-ed9f54e6c95d.mov
+
+
+
 ### Delete an Appointment
 
 
+
+https://user-images.githubusercontent.com/84533333/158037670-3e16b527-1bba-4184-9588-747b08a8d8eb.mov
+
+
 ### See Updates in Real Time
+
+
+https://user-images.githubusercontent.com/84533333/158037676-3c084db0-90a3-47b7-b148-43bb8c974406.mov
+
 
 
 ## Getting Started
