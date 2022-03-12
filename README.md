@@ -3,7 +3,7 @@
 ---
 ## Overview
 ---
-Interview Scheduler is 
+Interview Scheduler is a single-page application built with React that allows users to book interviews between students and mentors
 
 ## Features
 ---
