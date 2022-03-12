@@ -8,15 +8,19 @@ Interview Scheduler is
 ## Features
 ---
 ### View Appointments by Day
+!["view"](public/screenshots/scheduler_view-days.mov)
 
 ### Add a New Appointment to an Available Appointment Slot
+!["new"](public/screenshots/scheduler_new.mov)
 
 ### Edit an Existing Appointment
+!["edit"](public/screenshots/scheduler_edit.mov)
 
 ### Delete an Appointment
+!["delete"](public/screenshots/scheduler_delete.mov)
 
 ### See Updates in Real Time
-
+!["websocket"](public/screenshots/scheduler_websocket.mov)
 
 ## Getting Started
 ---
