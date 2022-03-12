@@ -6,11 +6,17 @@ export function useApplicationData() {
   const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
   const SET_INTERVIEW = "SET_INTERVIEW";
 
+
   const initialState = {
     day: "Monday",
     days: [],
     appointments: {},
     interviewers: {},
+  };
+
+  const proxy = {
+    host: "localhost",
+    port: 8001,
   };
 
   function reducer(state, action) {
@@ -45,10 +51,40 @@ export function useApplicationData() {
   }
 
   useEffect(() => {
-    const proxy = {
-      host: "localhost",
-      port: 8001,
+    handleWebsocket()
+    getAllData()
+  }, []);
+
+  function handleWebsocket() {
+    const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    ws.onopen = (event) => {
+      ws.send("Client connected");
     };
+    ws.onerror = (error) => {
+      console.log(`WebSocket error: ${error}`)
+    }
+    ws.onmessage = (event) => {
+      const parsedData = JSON.parse(event.data);
+      const { id, type } = parsedData;
+  
+      if(type === "SET_INTERVIEW"){
+        Promise.all([
+          axios.get("/api/days", {
+            proxy: proxy,
+          }),
+          axios.get("/api/appointments", {
+            proxy: proxy,
+          }),
+        ])
+          .then((all) => updateAppointmentsAndSpots(all[0].data, all[1].data, all[1].data[id]))
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }
+  }
+
+  function getAllData() {
 
     Promise.all([
       axios.get("/api/days", {
@@ -62,17 +98,50 @@ export function useApplicationData() {
       }),
     ])
       .then((all) => {
-        dispatch({ type: SET_APPLICATION_DATA, value: all });
+        dispatch({ type: SET_APPLICATION_DATA, value: all })
       })
       .catch((error) => {
         console.log(error.status);
         console.log(error.header);
         console.log(error.data);
       });
-  }, []);
+  
+  }
 
-  function updateAppointmentsAndSpots(appointment) {
-    const { day, days, appointments } = state;
+  function updateAppointmentsAndSpotsNoState(days, appointments, appointment) {
+
+    const updatedAppointments = {
+      ...appointments,
+      [appointment.id]: appointment,
+    };
+
+    const day = days.filter((d) => {
+      d.appointments.includes(appointment.id)
+    })
+
+    const updatedDays = days.map((d) => {
+      if (d.name === day.name) {
+        const availableSpotsForDay = d.appointments.filter(
+          (id) => !updatedAppointments[id].interview
+        ).length;
+
+        return {
+          ...d,
+          spots: availableSpotsForDay,
+        };
+      }
+
+      return d;
+    });
+
+    dispatch({
+      type: SET_INTERVIEW,
+      value: [updatedAppointments, updatedDays],
+    });
+  }
+
+  function updateAppointmentsAndSpots(days, appointments, appointment) {
+    const { day } = state;
 
     const updatedAppointments = {
       ...appointments,
@@ -108,7 +177,7 @@ export function useApplicationData() {
 
     const updateAppts = axios.put(`/api/appointments/${id}`, appointment);
     updateAppts
-      .then(() => updateAppointmentsAndSpots(appointment))
+      .then(() => updateAppointmentsAndSpots(state.days, state.appointments, appointment))
       .catch((error) => {
         console.log(error);
       });
@@ -126,7 +195,9 @@ export function useApplicationData() {
       appointment
     );
     deleteInterview
-      .then(() => updateAppointmentsAndSpots(appointment))
+      .then(() => {
+        updateAppointmentsAndSpots(state.days, state.appointments, appointment)
+      })
       .catch((error) => {
         console.log(error);
       });
