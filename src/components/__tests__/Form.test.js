@@ -132,7 +132,7 @@ describe("Form", () => {
   
     fireEvent.click(getByText("Save"));
   
-    fireEvent.change(getByPlaceholderText("Enter Student Name"), {
+    fireEvent.change(getByPlaceholderText(/enter student name/i), {
       target: { value: "Lydia Miller-Jones" }
     });
   
