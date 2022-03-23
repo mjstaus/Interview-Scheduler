@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.26.0",
     "classnames": "^2.2.6",
+    "cypress": "^9.5.2",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.8.1",
     "react": "^16.9.0",
